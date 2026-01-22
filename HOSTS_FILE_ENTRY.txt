@@ -1,0 +1,12 @@
+# Add this line to: C:\Windows\System32\drivers\etc\hosts
+# You need Administrator privileges to edit this file
+# Right-click Notepad -> Run as Administrator, then open this file
+
+127.0.0.1    roomunite.local
+
+# After adding, flush DNS cache:
+# Run in PowerShell as Admin: ipconfig /flushdns
+
+
+
+

@@ -1,0 +1,18 @@
+Add this line to your Windows hosts file:
+
+127.0.0.1    roomunite.local
+
+INSTRUCTIONS:
+1. Press Windows Key + R
+2. Type: notepad C:\Windows\System32\drivers\etc\hosts
+3. Press Ctrl+Shift+Enter (to run as Administrator)
+4. If prompted, click "Yes" to allow Notepad to run as Administrator
+5. Add the line above at the end of the file
+6. Save the file (Ctrl+S)
+7. Close Notepad
+
+ALTERNATIVE METHOD:
+1. Open PowerShell as Administrator (Right-click > Run as Administrator)
+2. Run this command:
+   Add-Content -Path "C:\Windows\System32\drivers\etc\hosts" -Value "`n127.0.0.1    roomunite.local"
+
