@@ -53,23 +53,60 @@
 
 
 /* Calendar */
+.calendar-week-row {
+    display: block;
+    width: 100%;
+    overflow: hidden;
+}
 
-.col-md-02 {
-    width: 14.30%;
+.calendar-week-row::after {
+    content: "";
+    display: table;
+    clear: both;
 }
-.col-md-02 {
-    float: left;
-}
+
 .col-md-02 {
     position: relative;
     min-height: 1px;
     padding-right: 0;
     padding-left: 0;
-    margin-left: -1px;
+    margin-left: 0;
+    float: left;
+    width: 14.2857% !important; /* 100% / 7 days = exactly 14.2857% */
+    box-sizing: border-box;
 }
 
-.calender_box{ border:1px solid #d4d4d4; padding:2px 5px; height:90px; border-bottom:0;}
-.dTfont{ margin-top:48%; position:absolute;}
+.calender_box{ 
+    border:1px solid #d4d4d4; 
+    padding:5px; 
+    height:110px; 
+    border-right:0;
+    border-bottom:0;
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.calendar-week-row .col-md-02:last-child .calender_box {
+    border-right: 1px solid #d4d4d4;
+}
+
+.calendar-week-row:last-child .calender_box {
+    border-bottom: 1px solid #d4d4d4;
+}
+
+.dTfont{ 
+    position:absolute;
+    bottom: 5px;
+    left: 5px;
+    right: 5px;
+    font-size: 1.2rem;
+}
+
+.final_day {
+    font-size: 1.4rem;
+    font-weight: 500;
+}
 .dt-not-available{
   background-color: #dce0e0;
   cursor: not-allowed;

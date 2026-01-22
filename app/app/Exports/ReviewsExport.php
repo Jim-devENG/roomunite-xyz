@@ -3,6 +3,8 @@
 namespace App\Exports;
 
 use App\Models\Reviews;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\WithHeadings;
@@ -58,11 +60,18 @@ class ReviewsExport implements FromArray,WithHeadings,ShouldAutoSize
         ->join('users', function ($join) {
                 $join->on('users.id', '=', 'reviews.sender_id');
         })
-        ->join('users as receiver', function ($join) {
+        ->leftJoin('users as receiver', function ($join) {
                 $join->on('receiver.id', '=', 'reviews.receiver_id');
-        })
-        ->select(['reviews.id as id', 'booking_id', 'properties.name as property_name', 'properties.id as property_id', 'users.first_name as sender', 'receiver.first_name as receiver', 'reviewer', 'message', 'reviews.created_at as created_at', 'reviews.updated_at as updated_at'])
-        ->orderBy('reviews.id', 'desc');
+        });
+        
+        // Check if first_name column exists, otherwise use email or a default
+        if (Schema::hasColumn('users', 'first_name')) {
+            $reviews->select(['reviews.id as id', 'booking_id', 'properties.name as property_name', 'properties.id as property_id', 'users.first_name as sender', 'receiver.first_name as receiver', 'reviewer', 'message', 'reviews.created_at as created_at', 'reviews.updated_at as updated_at']);
+        } else {
+            $reviews->select(['reviews.id as id', 'booking_id', 'properties.name as property_name', 'properties.id as property_id', DB::raw('COALESCE(users.email, "N/A") as sender'), DB::raw('COALESCE(receiver.email, "N/A") as receiver'), 'reviewer', 'message', 'reviews.created_at as created_at', 'reviews.updated_at as updated_at']);
+        }
+        
+        $reviews->orderBy('reviews.id', 'desc');
         return $reviews;
     }
 

@@ -4,6 +4,7 @@ namespace App\DataTables;
 
 use App\Models\User;
 use Yajra\DataTables\Services\DataTable;
+use Illuminate\Support\Facades\Schema;
 use Auth;
 
 class CustomerDataTable extends DataTable
@@ -31,6 +32,13 @@ class CustomerDataTable extends DataTable
                 ->addColumn('created_at', function ($users) {
                 return dateFormat($users->created_at);
             })
+            ->addColumn('status', function ($users) {
+                // Check if status column exists, otherwise return default
+                if (Schema::hasColumn('users', 'status')) {
+                    return $users->status ?? 'Active';
+                }
+                return 'Active'; // Default value if column doesn't exist
+            })
             ->rawColumns(['first_name', 'last_name', 'formatted_phone','action'])
             ->make(true);
     }
@@ -50,7 +58,7 @@ class CustomerDataTable extends DataTable
         if (!empty($to)) {
              $query->whereDate('created_at', '<=', $to);
         }
-        if (!empty($status)) {
+        if (!empty($status) && Schema::hasColumn('users', 'status')) {
             $query->where('status', '=', $status);
         }
         if (!empty($customer)) {

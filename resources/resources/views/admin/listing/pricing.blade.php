@@ -31,7 +31,7 @@
           <div class="col-md-8">
             <label for="listing_price_native" class="label-large">{{trans('messages.listing_price.night_price')}} <span class="text-danger">*</span></label>
             <div class="input-addon">
-              <span class="input-prefix pay-currency">{!! $result->property_price->currency->org_symbol !!}</span>
+              <span class="input-prefix pay-currency">{!! $result->property_price->currency->org_symbol ?? ($result->property_price->currency_code ?? '') !!}</span>
               <input type="text" data-suggested="" id="price-night" value="{{ ($result->property_price->original_price == 0) ? '' : $result->property_price->original_price }}" name="price" class="money-input form-control">
             </div>
             <span class="text-danger">{{ $errors->first('price') }}</span>
@@ -61,14 +61,14 @@
           <div class="col-md-8">
             <label for="listing_price_native" class="label-large">{{trans('messages.listing_price.week_price')}}</label>
             <div class="input-addon">
-              <span class="input-prefix pay-currency">{!! $result->property_price->currency->org_symbol !!}</span>
+              <span class="input-prefix pay-currency">{!! $result->property_price->currency->org_symbol ?? ($result->property_price->currency_code ?? '') !!}</span>
               <input type="text" data-suggested="" id="price-week" value="{{ $result->property_price->weekly_discount }}" name="weekly_discount" data-saving="long_price" class="money-input form-control">
             </div>
           </div>
           <div class="col-md-8">
             <label for="listing_price_native" class="label-large">{{trans('messages.listing_price.monthly_price')}}</label>
             <div class="input-addon">
-              <span class="input-prefix pay-currency">{!! $result->property_price->currency->org_symbol !!}</span>
+              <span class="input-prefix pay-currency">{!! $result->property_price->currency->org_symbol ?? ($result->property_price->currency_code ?? '') !!}</span>
               <input type="text" data-suggested="₹16905" id="price-month" class="money-input  form-control" value="{{ $result->property_price->monthly_discount }}" name="monthly_discount" data-saving="long_price">
             </div>
           </div>
@@ -89,7 +89,7 @@
             <div class="col-md-12">
               <div class="col-md-4 l-pad-none">
                 <div class="input-addon">
-                  <span class="input-prefix pay-currency">{!! $result->property_price->currency->org_symbol !!}</span>
+                  <span class="input-prefix pay-currency">{!! $result->property_price->currency->org_symbol ?? ($result->property_price->currency_code ?? '') !!}</span>
                   <input type="text" data-extras="true" id="price-cleaning" value="{{ $result->property_price->original_cleaning_fee }}" name="cleaning_fee" class="money-input" data-saving="additional-saving">
                 </div>
               </div>
@@ -105,7 +105,7 @@
             <div class="col-md-12">
               <div class="col-md-4 l-pad-none">
                 <div class="input-addon">
-                  <span class="input-prefix pay-currency">{!! $result->property_price->currency->org_symbol !!}</span>
+                  <span class="input-prefix pay-currency">{!! $result->property_price->currency->org_symbol ?? ($result->property_price->currency_code ?? '') !!}</span>
                   <input type="text" data-extras="true" value="{{ $result->property_price->original_guest_fee }}" id="price-extra_person" name="guest_fee" class="money-input" data-saving="additional-saving">
                 </div>
               </div>
@@ -135,7 +135,7 @@
             <div class="col-md-12">
               <div class="col-md-4 l-pad-none">
                 <div class="input-addon">
-                  <span class="input-prefix pay-currency">{!! $result->property_price->currency->org_symbol !!}</span>
+                  <span class="input-prefix pay-currency">{!! $result->property_price->currency->org_symbol ?? ($result->property_price->currency_code ?? '') !!}</span>
                   <input type="text" class="money-input" data-extras="true" value="{{ $result->property_price->original_security_fee }}" id="price-security" name="security_fee" class="autosubmit-text input-stem input-large" data-saving="additional-saving">
                 </div>
               </div>
@@ -151,7 +151,7 @@
             <div class="col-md-12">
               <div class="col-md-4 l-pad-none">
                 <div class="input-addon">
-                  <span class="input-prefix pay-currency">{!! $result->property_price->currency->org_symbol !!}</span>
+                  <span class="input-prefix pay-currency">{!! $result->property_price->currency->org_symbol ?? ($result->property_price->currency_code ?? '') !!}</span>
                   <input type="text" data-extras="true" value="{{ $result->property_price->original_weekend_price }}" id="price-weekend" name="weekend_price" class="money-input" data-saving="additional-saving">
                 </div>
               </div>

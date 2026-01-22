@@ -38,7 +38,7 @@ class CalendarController extends Controller
             $month = date('m');
         }
 
-        $property_price = PropertyPrice::where('property_id', $property_id)->first();
+        $property_price = PropertyPrice::with('currency')->where('property_id', $property_id)->first();
 
         $totalDays = cal_days_in_month(CAL_GREGORIAN, $month, $year);
 
@@ -83,13 +83,13 @@ class CalendarController extends Controller
         $out .= '<div class="host-calendar-container"><div class="calendar-month">';
 
         $out .= '<div class="row-space-2 deselect-on-click">
-                    <a href="'.url('admin/manage-listing/'.$property_id.'/calendar').'" class="month-nav month-nav-previous panel text-center" data-year="'.$prvYear.'" data-month="'.$prvMonth.'"> <i class="fa fa-chevron-left fa-lg calendar-icon-style"></i> </a>
-                    <a href="'.url('admin/manage-listing/'.$property_id.'/calendar').'" class="month-nav month-nav-next panel text-center" data-year="'.$nxtYear.'" data-month="'.$nxtMonth.'"> <i class="fa fa-chevron-right fa-lg calendar-icon-style"></i> </a>
+                    <a href="'.url('admin/listing/'.$property_id.'/calender').'" class="month-nav month-nav-previous panel text-center" data-year="'.$prvYear.'" data-month="'.$prvMonth.'"> <i class="fa fa-chevron-left fa-lg calendar-icon-style"></i> </a>
+                    <a href="'.url('admin/listing/'.$property_id.'/calender').'" class="month-nav month-nav-next panel text-center" data-year="'.$nxtYear.'" data-month="'.$nxtMonth.'"> <i class="fa fa-chevron-right fa-lg calendar-icon-style"></i> </a>
                     <div class="current-month-selection"> <h2> <span>'.date('F Y', $localDate).'</span> <span> &nbsp;</span> <span class="current-month-arrow">▾</span> </h2>'.$monthSelect.'<div class="spinner-next-to-month-nav">Just a moment...</div></div>
                  </div>';
 
         $out .= '<div class="col-md-12 col-sm-12 col-xs-12"><div class="calenBox">';
-        $out .='<div class="margin-top10">
+        $out .='<div class="margin-top10 calendar-week-row clearfix">
                     <div class="col-md-02"><div class="wkText">Mon</div></div>
                     <div class="col-md-02"><div class="wkText">Tue</div></div>
                     <div class="col-md-02"><div class="wkText">Wed</div></div>
@@ -100,6 +100,9 @@ class CalendarController extends Controller
                 </div>';
 
         while ($day <= $totalDays) {
+            // Start a new row for each week
+            $out .= '<div class="margin-top10 calendar-week-row clearfix">';
+            
             for ($i = 0; $i < 7; $i++) {
                 $class = '';
                 if ($day < $curDay && $year <= $curYear && $month <= $curMonth) {
@@ -148,7 +151,7 @@ class CalendarController extends Controller
                     $out .= '<div class="col-md-02" style="cursor:pointer">
                                 <div class="calender_box date-package-modal-admin '.$class.'" style="background-color:'.$property_price->color($date).' !important " id="'.$date.'" data-day="'.$day.'" data-month="'.$month.'" data-year="'.$year.'" data-price="'.$property_price->original_price($date).'"data-status="'.$property_price->available($date).'" data-minday="'.$property_price->min_day($date).'" data-minday="'.$property_price->min_day($date).'">
                                     <div class="wkText final_day">'.$finalDay.' '.$today.'</div>
-                                    <div class="dTfont wkText">'.$property_price->currency->org_symbol.$property_price->original_price($date).'</div>
+                                    <div class="dTfont wkText">'.($property_price->currency ? $property_price->currency->org_symbol : ($property_price->currency_code ?? '')).$property_price->original_price($date).'</div>
                                 </div>
                             </div>';
                 } elseif (($year >= $curYear && $month >= $curMonth) && ($property_price->available($date)=='Not available') && ($property_price->type($date)=='calendar') && (($property_price->color($date))!=null)) {
@@ -157,14 +160,14 @@ class CalendarController extends Controller
                         $out .= '<div class="col-md-02">
                                     <div class="calender_box date-package-modal-admin '.$class.'" id="'.$date.'" data-day="'.$day.'" data-month="'.$month.'" data-year="'.$year.'" data-price="'.$property_price->original_price($date).'"data-status="'.$property_price->available($date).'" data-minday="'.$property_price->min_day($date).'">
                                         <div class="wkText final_day">'.$finalDay.' '.$today.'</div>
-                                        <div class="dTfont wkText">'.$property_price->currency->org_symbol.$property_price->original_price($date).'</div>
+                                        <div class="dTfont wkText">'.($property_price->currency ? $property_price->currency->org_symbol : ($property_price->currency_code ?? '')).$property_price->original_price($date).'</div>
                                     </div>
                                 </div>';
                     } else {
                         $out .= '<div class="col-md-02">
                                 <div class="calender_box date-package-modal-admin"  style="background-color:'.$property_price->color($date).' !important " id="'.$date.'" data-day="'.$day.'" data-month="'.$month.'" data-year="'.$year.'" data-price="'.$property_price->original_price($date).'"data-status="'.$property_price->available($date).'" data-minday="'.$property_price->min_day($date).'">
                                     <div class="wkText final_day">'.$finalDay.' '.$today.'</div>
-                                    <div class="dTfont wkText">'.$property_price->currency->org_symbol.$property_price->original_price($date).'</div>
+                                    <div class="dTfont wkText">'.($property_price->currency ? $property_price->currency->org_symbol : ($property_price->currency_code ?? '')).$property_price->original_price($date).'</div>
                                 </div>
                             </div>';
                     }
@@ -173,7 +176,7 @@ class CalendarController extends Controller
                     $out .= '<div class="col-md-02" style="cursor:pointer">
                             <div class="calender_box date-package-modal-admin '.$class.'" id="'.$date.'" data-day="'.$day.'" data-month="'.$month.'" data-year="'.$year.'" data-price="'.$property_price->original_price($date).'"data-status="'.$property_price->available($date).'" data-minday="'.$property_price->min_day($date).'">
                                 <div class="wkText final_day">'.$finalDay.' '.$today.'</div>
-                                <div class="dTfont wkText">'.$property_price->currency->org_symbol.$property_price->original_price($date).'</div>
+                                <div class="dTfont wkText">'.($property_price->currency ? $property_price->currency->org_symbol : ($property_price->currency_code ?? '')).$property_price->original_price($date).'</div>
                             </div>
                         </div>';
                 } elseif (($year >= $curYear && $month >= $curMonth) && ($property_price->available($date)=='Not available') && ($property_price->type($date)=='normal')) {
@@ -186,22 +189,24 @@ class CalendarController extends Controller
                         $out .= '<div class="col-md-02">
                                     <div class="calender_box date-package-modal-admin '.$class.'" id="'.$date.'" data-day="'.$day.'" data-month="'.$month.'" data-year="'.$year.'" data-price="'.$property_price->original_price($date).'"data-status="'.$property_price->available($date).'" data-minday="'.$property_price->min_day($date).'">
                                         <div class="wkText final_day">'.$finalDay.' '.$today.'</div>
-                                        <div class="dTfont wkText">'.$property_price->currency->org_symbol.$property_price->original_price($date).'</div>
+                                        <div class="dTfont wkText">'.($property_price->currency ? $property_price->currency->org_symbol : ($property_price->currency_code ?? '')).$property_price->original_price($date).'</div>
                                     </div>
                                 </div>';
                 } else {
                     $out .= '<div class="col-md-02" style="cursor:pointer">
                             <div class="calender_box date-package-modal-admin '.$class.'" id="'.$date.'" data-day="'.$day.'" data-month="'.$month.'" data-year="'.$year.'" data-price="'.$property_price->original_price($date).'"data-status="'.$property_price->available($date).'" data-minday="'.$property_price->min_day($date).'">
                                 <div class="wkText final_day">'.$finalDay.' '.$today.'</div>
-                                <div class="dTfont wkText">'.$property_price->currency->org_symbol.$property_price->original_price($date).'</div>
+                                <div class="dTfont wkText">'.($property_price->currency ? $property_price->currency->org_symbol : ($property_price->currency_code ?? '')).$property_price->original_price($date).'</div>
                             </div>
                         </div>';
                 }
 
                 $day++;
             }
+            
+            // Close the row after each week (7 days)
+            $out .= '</div>';
         }
-
 
         $out .= '</div></div></div></div>';
 

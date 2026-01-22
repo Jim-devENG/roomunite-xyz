@@ -31,6 +31,8 @@ use App\Exports\PropertiesExport;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Helpers\Common;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Admin\CalendarController;
 
 use App\Models\{
@@ -192,7 +194,13 @@ class PropertiesController extends Controller
 
         $data['property_type'] = PropertyType::where('status', 'Active')->pluck('name', 'id');
         $data['space_type']    = SpaceType::where('status', 'Active')->pluck('name', 'id');
-        $data['users']         = User::where('status', 'Active')->get();
+        
+        // Check if status column exists in users table before filtering
+        $usersQuery = User::query();
+        if (Schema::hasColumn('users', 'status')) {
+            $usersQuery->where('status', 'Active');
+        }
+        $data['users'] = $usersQuery->get();
         return view('admin.properties.add', $data);
     }
 
@@ -200,9 +208,15 @@ class PropertiesController extends Controller
     {
         $step            = $request->step;
         $property_id     = $request->id;
+        
+        // Map 'calendar' to 'calender' for backward compatibility
+        if ($step == 'calendar') {
+            $step = 'calender';
+        }
 
         $data['step']    = $step;
-        $data['result']  = Properties::findOrFail($property_id);
+        // Eager load property_price and currency relationships to prevent null errors
+        $data['result']  = Properties::with('property_price.currency')->findOrFail($property_id);
         $data['details'] = PropertyDetails::pluck('value', 'field');
 
         if ($step == 'basics') {
@@ -261,9 +275,16 @@ class PropertiesController extends Controller
                 return redirect('admin/listing/'.$property_id.'/description');
             }
 
-            $data['bed_type']       = BedType::pluck('name', 'id');
-            $data['property_type']  = PropertyType::where('status', 'Active')->pluck('name', 'id');
-            $data['space_type']     = SpaceType::pluck('name', 'id');
+            try {
+                $data['bed_type']       = BedType::pluck('name', 'id');
+                $data['property_type']  = PropertyType::where('status', 'Active')->pluck('name', 'id');
+                $data['space_type']     = SpaceType::pluck('name', 'id');
+            } catch (\Exception $e) {
+                Log::error('Error loading basics data: ' . $e->getMessage());
+                $data['bed_type']       = collect([]);
+                $data['property_type']  = collect([]);
+                $data['space_type']     = collect([]);
+            }
         }
         elseif ($step == 'description') {
             if ($request->isMethod('post')) {
@@ -460,6 +481,9 @@ class PropertiesController extends Controller
                                 ->get();
         }
         elseif ($step == 'pricing') {
+            // Load currency data for the pricing form
+            $data['currency'] = Currency::getAll()->pluck('name', 'code');
+            
             if ($request->isMethod('post')) {
                 $bookings = Bookings::where('property_id', $property_id)->where('currency_code', '!=', $request->currency_code)->first();
                 if($bookings) {

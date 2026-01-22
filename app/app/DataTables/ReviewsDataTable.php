@@ -4,6 +4,8 @@ namespace App\DataTables;
 
 use App\Models\Reviews;
 use Yajra\DataTables\Services\DataTable;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 class ReviewsDataTable extends DataTable
 {
@@ -47,10 +49,16 @@ class ReviewsDataTable extends DataTable
                         ->join('users', function ($join) {
                                 $join->on('users.id', '=', 'reviews.sender_id');
                         })
-                        ->join('users as receiver', function ($join) {
+                        ->leftJoin('users as receiver', function ($join) {
                                 $join->on('receiver.id', '=', 'reviews.receiver_id');
-                        })
-                        ->select(['reviews.id as id', 'sender_id', 'receiver_id', 'booking_id', 'properties.name as property_name', 'properties.id as property_id', 'users.first_name as sender', 'receiver.first_name as receiver', 'reviewer', 'message', 'reviews.created_at as created_at', 'reviews.updated_at as updated_at']);
+                        });
+        
+        // Check if first_name column exists, otherwise use email or a default
+        if (Schema::hasColumn('users', 'first_name')) {
+            $reviews->select(['reviews.id as id', 'sender_id', 'receiver_id', 'booking_id', 'properties.name as property_name', 'properties.id as property_id', 'users.first_name as sender', 'receiver.first_name as receiver', 'reviewer', 'message', 'reviews.created_at as created_at', 'reviews.updated_at as updated_at']);
+        } else {
+            $reviews->select(['reviews.id as id', 'sender_id', 'receiver_id', 'booking_id', 'properties.name as property_name', 'properties.id as property_id', DB::raw('COALESCE(users.email, "N/A") as sender'), DB::raw('COALESCE(receiver.email, "N/A") as receiver'), 'reviewer', 'message', 'reviews.created_at as created_at', 'reviews.updated_at as updated_at']);
+        }
         if (!empty($from)) {
             $reviews->whereDate('reviews.created_at', '>=', $from);
         }

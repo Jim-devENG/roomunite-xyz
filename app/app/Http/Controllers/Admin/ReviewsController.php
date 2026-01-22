@@ -27,6 +27,8 @@ use App\Http\Helpers\Common;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Controllers\Controller;
 use App\DataTables\ReviewsDataTable;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 use App\Models\{
     Properties,
@@ -79,10 +81,17 @@ class ReviewsController extends Controller
                         ->join('users', function ($join) {
                                 $join->on('users.id', '=', 'reviews.sender_id');
                         })
-                        ->join('users as receiver', function ($join) {
+                        ->leftJoin('users as receiver', function ($join) {
                                 $join->on('receiver.id', '=', 'reviews.receiver_id');
                         })
-                        ->where('reviews.id', $request->id)->select(['reviews.id as id', 'booking_id', 'properties.name as property_name', 'users.first_name as sender', 'receiver.first_name as receiver', 'reviewer','rating','accuracy','location','communication','checkin','cleanliness','value','message'])->first();
+                        ->where('reviews.id', $request->id);
+        
+        // Check if first_name column exists, otherwise use email or a default
+        if (Schema::hasColumn('users', 'first_name')) {
+            $data['result'] = $data['result']->select(['reviews.id as id', 'booking_id', 'properties.name as property_name', 'users.first_name as sender', 'receiver.first_name as receiver', 'reviewer','rating','accuracy','location','communication','checkin','cleanliness','value','message'])->first();
+        } else {
+            $data['result'] = $data['result']->select(['reviews.id as id', 'booking_id', 'properties.name as property_name', DB::raw('COALESCE(users.email, "N/A") as sender'), DB::raw('COALESCE(receiver.email, "N/A") as receiver'), 'reviewer','rating','accuracy','location','communication','checkin','cleanliness','value','message'])->first();
+        }
             return view('admin.reviews.edit', $data);
         } elseif ($request->submit) {
 
@@ -204,11 +213,18 @@ class ReviewsController extends Controller
         ->join('users', function ($join) {
                 $join->on('users.id', '=', 'reviews.sender_id');
         })
-        ->join('users as receiver', function ($join) {
+        ->leftJoin('users as receiver', function ($join) {
                 $join->on('receiver.id', '=', 'reviews.receiver_id');
-        })
-        ->select(['reviews.id as id', 'booking_id', 'properties.name as property_name', 'properties.id as property_id', 'users.first_name as sender', 'receiver.first_name as receiver', 'reviewer', 'message', 'reviews.created_at as created_at', 'reviews.updated_at as updated_at'])
-        ->orderBy('reviews.id', 'desc');
+        });
+        
+        // Check if first_name column exists, otherwise use email or a default
+        if (Schema::hasColumn('users', 'first_name')) {
+            $reviews->select(['reviews.id as id', 'booking_id', 'properties.name as property_name', 'properties.id as property_id', 'users.first_name as sender', 'receiver.first_name as receiver', 'reviewer', 'message', 'reviews.created_at as created_at', 'reviews.updated_at as updated_at']);
+        } else {
+            $reviews->select(['reviews.id as id', 'booking_id', 'properties.name as property_name', 'properties.id as property_id', DB::raw('COALESCE(users.email, "N/A") as sender'), DB::raw('COALESCE(receiver.email, "N/A") as receiver'), 'reviewer', 'message', 'reviews.created_at as created_at', 'reviews.updated_at as updated_at']);
+        }
+        
+        $reviews->orderBy('reviews.id', 'desc');
         return $reviews;
     }
 }

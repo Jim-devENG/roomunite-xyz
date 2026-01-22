@@ -54,17 +54,24 @@ class AppServiceProvider extends ServiceProvider
             if (\Schema::hasTable('settings')) {
                 $result = Settings::where('type', 'email')->pluck('value', 'name')->toArray();
                 if (isset($result['driver'])) {
+                    // For development on Windows, use 'log' driver instead of 'sendmail'
+                    $mailDriver = $result['driver'];
+                    if ($mailDriver === 'sendmail' && env('APP_ENV') === 'local') {
+                        $mailDriver = 'log';
+                    }
+                    
+                    // Use new Laravel 8+ mail configuration format
                     \Config::set([
-                        'mail.driver'     => $result['driver'],
-                        'mail.host'       => $result['host'],
-                        'mail.port'       => $result['port'],
+                        'mail.default'     => $mailDriver,
+                        'mail.mailers.smtp.host'       => $result['host'] ?? env('MAIL_HOST', 'smtp.mailgun.org'),
+                        'mail.mailers.smtp.port'       => $result['port'] ?? env('MAIL_PORT', 587),
+                        'mail.mailers.smtp.encryption' => $result['encryption'] ?? env('MAIL_ENCRYPTION', 'tls'),
+                        'mail.mailers.smtp.username'   => $result['username'] ?? env('MAIL_USERNAME'),
+                        'mail.mailers.smtp.password'   => $result['password'] ?? env('MAIL_PASSWORD'),
                         'mail.from'       => [
-                                                'address' => $result['from_address'],
-                                                'name'    => $result['from_name']
+                                                'address' => $result['from_address'] ?? env('MAIL_FROM_ADDRESS', 'hello@example.com'),
+                                                'name'    => $result['from_name'] ?? env('MAIL_FROM_NAME', 'Example')
                                             ],
-                        'mail.encryption' => $result['encryption'],
-                        'mail.username'   => $result['username'],
-                        'mail.password'   => $result['password']
                         ]);
                 }
             }

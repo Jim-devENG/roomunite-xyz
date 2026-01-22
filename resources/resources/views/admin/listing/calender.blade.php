@@ -215,4 +215,94 @@
     </div>
   </section>
 </div>
+
+@push('css')
+<style>
+    /* Calendar Grid Layout Fixes */
+    .calendar-week-row {
+        display: block;
+        width: 100%;
+        overflow: hidden;
+    }
+    
+    .calendar-week-row::after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+    
+    .calenBox {
+        width: 100%;
+        overflow: hidden;
+    }
+    
+    .col-md-02 {
+        float: left;
+        width: 14.2857% !important; /* 100% / 7 days = 14.2857% */
+        box-sizing: border-box;
+        position: relative;
+        min-height: 1px;
+        padding-right: 0;
+        padding-left: 0;
+    }
+    
+    .calender_box {
+        border: 1px solid #d4d4d4;
+        padding: 5px;
+        height: 110px;
+        border-bottom: 0;
+        position: relative;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    
+    .calender_box:last-child {
+        border-bottom: 1px solid #d4d4d4;
+    }
+    
+    .calendar-week-row:last-child .calender_box {
+        border-bottom: 1px solid #d4d4d4;
+    }
+    
+    .wkText {
+        font-size: 1.4rem;
+        color: #414141;
+        margin-left: 2px;
+        font-weight: 500;
+    }
+    
+    .dTfont {
+        position: absolute;
+        bottom: 5px;
+        left: 5px;
+        right: 5px;
+        font-size: 1.2rem;
+    }
+    
+    .final_day {
+        font-size: 1.4rem;
+        font-weight: 500;
+    }
+    
+    @media (max-width: 768px) {
+        .col-md-02 {
+            width: 14.2857% !important;
+        }
+        
+        .calender_box {
+            height: 80px;
+            padding: 3px;
+        }
+        
+        .wkText, .final_day {
+            font-size: 1.2rem;
+        }
+        
+        .dTfont {
+            font-size: 1rem;
+        }
+    }
+</style>
+@endpush
+
 @stop

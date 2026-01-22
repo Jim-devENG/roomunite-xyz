@@ -241,6 +241,7 @@
                         <div class="col-md-9 col-sm-9">
                             <div class="row">
                                 <div class="col-md-6 col-sm-6">
+                                    @if($result->property_price)
                                     <div> <i class="fa fa-users text-13 mr-2" style="color: #5d717fa2"></i> {{trans('messages.property_single.extra_people')}}:
                                         <strong>
                                             @if($result->property_price->guest_fee !=0)
@@ -266,10 +267,19 @@
                                             /{{trans('messages.property_single.week')}}</strong>
                                         @endif
                                     </div>
-
+                                    @else
+                                    <div> <i class="fa fa-users text-13 mr-2" style="color: #5d717fa2"></i> {{trans('messages.property_single.extra_people')}}:
+                                        <strong><span>{{trans('messages.property_single.no_charge')}}</span></strong>
+                                    </div>
+                                    <div>
+                                        <i class="fa fa-arrow-down mr-2 text-13" style="color: #5d717fa2" aria-hidden="true"></i> {{trans('messages.property_single.weekly_discount')}} (%):
+                                        <strong><span>N/A</span></strong>
+                                    </div>
+                                    @endif
                                 </div>
 
                                 <div class="col-md-6 col-sm-6">
+                                    @if($result->property_price)
                                     <div>
                                         <i class="fa fa-arrow-down mr-2 text-13" style="color: #5d717fa2" aria-hidden="true"></i>
                                         {{trans('messages.property_single.monthly_discount')}} (%):
@@ -296,6 +306,13 @@
                                                 $result->property_price->weekend_price }}</span> /
                                             {{trans('messages.listing_price.weekend')}}
                                         </strong>
+                                    </div>
+                                    @endif
+                                    @else
+                                    <div>
+                                        <i class="fa fa-arrow-down mr-2 text-13" style="color: #5d717fa2" aria-hidden="true"></i>
+                                        {{trans('messages.property_single.monthly_discount')}} (%):
+                                        <strong><span>N/A</span></strong>
                                     </div>
                                     @endif
                                     <!-- end weekend price -->
@@ -1177,6 +1194,7 @@
                     <div class="col-md-9 col-sm-9">
                         <div class="row">
                             <div class="col-md-6 col-sm-6">
+                                @if($result->property_price)
                                 <div>
                                     <i class="fa fa-minus-circle mr-2 text-13" style="color: #5d717fa2" aria-hidden="true"></i>
                                     {{trans('messages.property_single.extra_people')}}:
@@ -1205,10 +1223,22 @@
                                         /{{trans('messages.property_single.week')}}</strong>
                                     @endif
                                 </div>
-
+                                @else
+                                <div>
+                                    <i class="fa fa-minus-circle mr-2 text-13" style="color: #5d717fa2" aria-hidden="true"></i>
+                                    {{trans('messages.property_single.extra_people')}}:
+                                    <strong><span>{{trans('messages.property_single.no_charge')}}</span></strong>
+                                </div>
+                                <div>
+                                    <i class="fa fa-arrow-down mr-2 text-13" style="color: #5d717fa2" aria-hidden="true"></i>
+                                    {{trans('messages.property_single.weekly_discount')}} (%):
+                                    <strong><span>N/A</span></strong>
+                                </div>
+                                @endif
                             </div>
 
                             <div class="col-md-6 col-sm-6">
+                                @if($result->property_price)
                                 <div>
                                     <i class="fa fa-arrow-down mr-2 text-13" style="color: #5d717fa2" aria-hidden="true"></i>
                                     {{trans('messages.property_single.monthly_discount')}} (%):
@@ -1235,6 +1265,13 @@
                                             $result->property_price->weekend_price }}</span> /
                                         {{trans('messages.listing_price.weekend')}}
                                     </strong>
+                                </div>
+                                @endif
+                                @else
+                                <div>
+                                    <i class="fa fa-arrow-down mr-2 text-13" style="color: #5d717fa2" aria-hidden="true"></i>
+                                    {{trans('messages.property_single.monthly_discount')}} (%):
+                                    <strong><span>N/A</span></strong>
                                 </div>
                                 @endif
                                 <!-- end weekend price -->

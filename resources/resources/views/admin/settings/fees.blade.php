@@ -7,16 +7,16 @@ $form_data = [
 		'action' => URL::to('/').'/admin/settings/fees',
 		'fields' => [
 			
-      		['type' => 'text', 'class' => '', 'label' => 'Guest service charge (%)', 'name' => "guest_service_charge", 'value' => $result['guest_service_charge'], 'hint' => 'service charge of guest for booking'],
+      		['type' => 'text', 'class' => '', 'label' => 'Guest service charge (%)', 'name' => "guest_service_charge", 'value' => $result['guest_service_charge'] ?? '', 'hint' => 'service charge of guest for booking'],
 
-            ['type' => 'text', 'class' => '', 'label' => 'I.V.A Tax (%)', 'name' => "iva_tax", 'value' => $result['iva_tax'], 'hint' => 'I.V.A Tax of guest for booking'],
+            ['type' => 'text', 'class' => '', 'label' => 'I.V.A Tax (%)', 'name' => "iva_tax", 'value' => $result['iva_tax'] ?? '', 'hint' => 'I.V.A Tax of guest for booking'],
 
-            ['type' => 'text', 'class' => '', 'label' => 'Accomadation Tax (%)', 'name' => "accomodation_tax", 'value' => $result['accomodation_tax'], 'hint' => 'accomadation Tax of guest for booking'],
+            ['type' => 'text', 'class' => '', 'label' => 'Accomadation Tax (%)', 'name' => "accomodation_tax", 'value' => $result['accomodation_tax'] ?? '', 'hint' => 'accomadation Tax of guest for booking'],
             
-            ['type' => 'text', 'class' => '', 'label' => 'Host Service Charge', 'name' => "host_service_charge", 'value' => $result['host_service_charge'], 'hint' => 'Host charges For Customer Service'],
+            ['type' => 'text', 'class' => '', 'label' => 'Host Service Charge', 'name' => "host_service_charge", 'value' => $result['host_service_charge'] ?? '', 'hint' => 'Host charges For Customer Service'],
 		    
-		    ['type' => 'text', 'class' => '', 'label' => 'Damages Insurance', 'name' => "damages_insurance", 'value' => $result['damages_insurance'], 'hint' => 'Damages Protection Insurance'],
-		    ['type' => 'text', 'class' => '', 'label' => 'Payment Processing Fees', 'name' => "payment_processing_fee", 'value' => $result['payment_processing_fee'], 'hint' => 'Payment processing fee for host not handling their payments'],
+		    ['type' => 'text', 'class' => '', 'label' => 'Damages Insurance', 'name' => "damages_insurance", 'value' => $result['damages_insurance'] ?? '', 'hint' => 'Damages Protection Insurance'],
+		    ['type' => 'text', 'class' => '', 'label' => 'Payment Processing Fees', 'name' => "payment_processing_fee", 'value' => $result['payment_processing_fee'] ?? '', 'hint' => 'Payment processing fee for host not handling their payments'],
 		]
 		    
 	];

@@ -2739,38 +2739,66 @@ li.edit-verifications-list-item p {
 	}
 
 	/*calender end*/
+	.calendar-week-row {
+		display: block;
+		width: 100%;
+		overflow: hidden;
+	}
+	
+	.calendar-week-row::after {
+		content: "";
+		display: table;
+		clear: both;
+	}
+	
 	.col-md-02 {
 		position: relative;
 		min-height: 1px;
 		padding-right: 0;
 		padding-left: 0;
-		margin-left: -1px;
-	}
-
-	.col-md-02 {
+		margin-left: 0;
 		float: left;
-	}
-
-	.col-md-02 {
-		width: 14.333%;
+		width: 14.2857% !important; /* 100% / 7 days = exactly 14.2857% */
+		box-sizing: border-box;
 	}
 
 	.wkText {
 		font-size: 1.6rem;
 		color: #414141;
 		margin-left: 2px;
+		font-weight: 500;
 	}
 
 	.calender_box {
 		border: 1px solid #d4d4d4;
-		padding: 2px 5px;
+		padding: 5px;
 		height: 110px;
+		border-right: 0;
 		border-bottom: 0;
+		position: relative;
+		width: 100%;
+		box-sizing: border-box;
+	}
+	
+	.calendar-week-row .col-md-02:last-child .calender_box {
+		border-right: 1px solid #d4d4d4;
+	}
+	
+	.calendar-week-row:last-child .calender_box {
+		border-bottom: 1px solid #d4d4d4;
 	}
 
 	.dTfont {
 		position: absolute;
-		bottom: 0;
+		bottom: 5px;
+		left: 5px;
+		right: 5px;
+		font-size: 1.2rem;
+	}
+	
+	.final_day {
+		font-size: 1.4rem;
+		font-weight: 500;
 	}
 
 	.dt-not-available {

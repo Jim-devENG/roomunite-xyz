@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use Validator;
 use DB;
 use PDF;
+use Illuminate\Support\Facades\Schema;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -50,7 +51,11 @@ class BookingsController extends Controller
             $data['properties'] = null;
         }
         if (isset(request()->customer)) {
-            $data['customers'] = User::where('users.id', request()->customer)->select('id', 'first_name', 'last_name')->get();
+            if (Schema::hasColumn('users', 'first_name')) {
+                $data['customers'] = User::where('users.id', request()->customer)->select('id', 'first_name', 'last_name')->get();
+            } else {
+                $data['customers'] = User::where('users.id', request()->customer)->select('id', 'email')->get();
+            }
         } else {
             $data['customers'] = null;
         }
@@ -390,8 +395,15 @@ class BookingsController extends Controller
         })
         ->leftJoin('users as u', function ($join) {
                 $join->on('u.id', '=', 'bookings.host_id');
-        })
-        ->select(['bookings.id as id', 'u.first_name as host_name', 'users.first_name as guest_name', 'properties.name as property_name', DB::raw('CONCAT(currency.symbol, bookings.total) AS total_amount'), 'bookings.status', 'bookings.created_at as created_at', 'bookings.updated_at as updated_at', 'bookings.start_date', 'bookings.end_date', 'bookings.guest', 'bookings.host_id', 'bookings.user_id', 'bookings.total', 'bookings.currency_code', 'bookings.service_charge', 'bookings.host_fee']);
+        });
+        
+        // Check if first_name column exists, otherwise use email or a default
+        if (Schema::hasColumn('users', 'first_name')) {
+            $allBookings->select(['bookings.id as id', 'u.first_name as host_name', 'users.first_name as guest_name', 'properties.name as property_name', DB::raw('CONCAT(currency.symbol, bookings.total) AS total_amount'), 'bookings.status', 'bookings.created_at as created_at', 'bookings.updated_at as updated_at', 'bookings.start_date', 'bookings.end_date', 'bookings.guest', 'bookings.host_id', 'bookings.user_id', 'bookings.total', 'bookings.currency_code', 'bookings.service_charge', 'bookings.host_fee']);
+        } else {
+            $allBookings->select(['bookings.id as id', DB::raw('COALESCE(u.email, "N/A") as host_name'), DB::raw('COALESCE(users.email, "N/A") as guest_name'), 'properties.name as property_name', DB::raw('CONCAT(currency.symbol, bookings.total) AS total_amount'), 'bookings.status', 'bookings.created_at as created_at', 'bookings.updated_at as updated_at', 'bookings.start_date', 'bookings.end_date', 'bookings.guest', 'bookings.host_id', 'bookings.user_id', 'bookings.total', 'bookings.currency_code', 'bookings.service_charge', 'bookings.host_fee']);
+        }
+        
         return $allBookings;
     }
 
@@ -408,9 +420,16 @@ class BookingsController extends Controller
         })
         ->leftJoin('users as u', function ($join) {
                 $join->on('u.id', '=', 'bookings.host_id');
-        })
-        ->select(['bookings.id as id', 'u.first_name as host_name', 'users.first_name as guest_name', 'properties.name as property_name', DB::raw('bookings.total AS total_amount'), 'bookings.currency_code as currency_name','bookings.status', 'bookings.created_at as created_at', 'bookings.updated_at as updated_at', 'bookings.start_date', 'bookings.end_date', 'bookings.guest', 'bookings.host_id', 'bookings.user_id', 'bookings.total', 'bookings.currency_code', 'bookings.service_charge', 'bookings.host_fee'])
-        ->orderBy('bookings.id', 'desc');
+        });
+        
+        // Check if first_name column exists, otherwise use email or a default
+        if (Schema::hasColumn('users', 'first_name')) {
+            $allBookings->select(['bookings.id as id', 'u.first_name as host_name', 'users.first_name as guest_name', 'properties.name as property_name', DB::raw('bookings.total AS total_amount'), 'bookings.currency_code as currency_name','bookings.status', 'bookings.created_at as created_at', 'bookings.updated_at as updated_at', 'bookings.start_date', 'bookings.end_date', 'bookings.guest', 'bookings.host_id', 'bookings.user_id', 'bookings.total', 'bookings.currency_code', 'bookings.service_charge', 'bookings.host_fee']);
+        } else {
+            $allBookings->select(['bookings.id as id', DB::raw('COALESCE(u.email, "N/A") as host_name'), DB::raw('COALESCE(users.email, "N/A") as guest_name'), 'properties.name as property_name', DB::raw('bookings.total AS total_amount'), 'bookings.currency_code as currency_name','bookings.status', 'bookings.created_at as created_at', 'bookings.updated_at as updated_at', 'bookings.start_date', 'bookings.end_date', 'bookings.guest', 'bookings.host_id', 'bookings.user_id', 'bookings.total', 'bookings.currency_code', 'bookings.service_charge', 'bookings.host_fee']);
+        }
+        
+        $allBookings->orderBy('bookings.id', 'desc');
         return $allBookings;
     }
 

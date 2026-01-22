@@ -7,7 +7,7 @@
     </div>
     <ul class="list-unstyled row-space-5">
       <li class="nav-item nav-calendar pre-listed" data-track="calendar" ng-class="(step == 'calendar') ? 'nav-active' : ''">
-        <a href="{{ ($room_step != 'calendar') ? url('manage-listing/'.$room_id.'/calendar') : '' }}" id="href_calendar">
+        <a href="{{ ($room_step != 'calender') ? url('admin/listing/'.$room_id.'/calender') : '' }}" id="href_calendar">
           <div class="row nav-item">
             <div class="col-sm-12 va-container">
               <span class="va-middle">{{ trans('messages.lys.calendar') }}</span>
@@ -34,7 +34,7 @@
         </a>
       </li>
       <li class="nav-item nav-pricing pre-listed" data-track="pricing" ng-class="(step == 'pricing') ? 'nav-active' : ''">
-        <a href="{{ ($room_step != 'pricing') ? url('manage-listing/'.$room_id.'/pricing') : '' }}" id="href_pricing">
+        <a href="{{ ($room_step != 'pricing') ? url('admin/listing/'.$room_id.'/pricing') : '' }}" id="href_pricing">
           <div class="row nav-item">
             <div class="col-sm-12 va-container">
               <span class="va-middle">{{ trans('messages.lys.pricing') }}</span>
@@ -62,7 +62,7 @@
         </a>
       </li>
       <li data-track="how-guests-book" class="nav-item nav-how-guests-book pre-listed" ng-class="(step == 'booking') ? 'nav-active' : ''">
-        <a href="{{ ($room_step != 'booking') ? url('manage-listing/'.$room_id.'/booking') : '' }}" id="href_booking">
+        <a href="{{ ($room_step != 'booking') ? url('admin/listing/'.$room_id.'/booking') : '' }}" id="href_booking">
           <div class="row nav-item">
             <div class="col-sm-12 va-container">
               <div class="text-wrap va-middle">
@@ -99,7 +99,7 @@
     <ul class="list-unstyled row-space-5">
       
         <li class="nav-item nav-basics pre-listed" data-track="basics" ng-class="(step == 'basics') ? 'nav-active' : ''">
-  <a href="{{ ($room_step != 'basics') ? url('manage-listing/'.$room_id.'/basics') : '' }}" id="href_basics">
+  <a href="{{ ($room_step != 'basics') ? url('admin/listing/'.$room_id.'/basics') : '' }}" id="href_basics">
     <div class="row nav-item">
       <div class="col-sm-12 va-container">
         <span class="va-middle">{{ trans('messages.lys.basics') }}</span>
@@ -128,7 +128,7 @@
 </li>
 
         <li class="nav-item nav-description pre-listed" data-track="description" ng-class="(step == 'description') ? 'nav-active' : ''">
-  <a href="{{ ($room_step != 'description') ? url('manage-listing/'.$room_id.'/description') : '' }}" id="href_description">
+  <a href="{{ ($room_step != 'description') ? url('admin/listing/'.$room_id.'/description') : '' }}" id="href_description">
     <div class="row nav-item">
       <div class="col-sm-12 va-container">
         <span class="va-middle">{{ trans('messages.lys.description') }}</span>
@@ -157,7 +157,7 @@
 </li>
 
         <li class="nav-item nav-location pre-listed" data-track="location" ng-class="(step == 'location') ? 'nav-active' : ''">
-  <a href="{{ ($room_step != 'location') ? url('manage-listing/'.$room_id.'/location') : '' }}" id="href_location">
+  <a href="{{ ($room_step != 'location') ? url('admin/listing/'.$room_id.'/location') : '' }}" id="href_location">
     <div class="row nav-item">
       <div class="col-sm-12 va-container">
         <span class="va-middle">{{ trans('messages.your_trips.location') }}</span>
@@ -186,7 +186,7 @@
 </li>
 
         <li class="nav-item nav-amenities pre-listed" data-track="amenities" ng-class="(step == 'amenities') ? 'nav-active' : ''">
-  <a href="{{ ($room_step != 'amenities') ? url('manage-listing/'.$room_id.'/amenities') : '' }}" id="href_amenities">
+  <a href="{{ ($room_step != 'amenities') ? url('admin/listing/'.$room_id.'/amenities') : '' }}" id="href_amenities">
     <div class="row nav-item">
       <div class="col-sm-12 va-container">
         <span class="va-middle">{{ trans('messages.lys.amenities') }}</span>
@@ -210,7 +210,7 @@
 </li>
 
 <li class="nav-item nav-photos pre-listed" data-track="photos" ng-class="(step == 'photos') ? 'nav-active' : ''">
-  <a href="{{ ($room_step != 'photos') ? url('manage-listing/'.$room_id.'/photos') : '' }}" id="href_photos">
+  <a href="{{ ($room_step != 'photos') ? url('admin/listing/'.$room_id.'/photos') : '' }}" id="href_photos">
     <div class="row nav-item">
       <div class="col-sm-12 va-container">
         <span class="va-middle">{{ trans('messages.lys.photos') }}</span>
@@ -248,7 +248,7 @@
     <ul class="list-unstyled row-space-5">
       
         <li class="nav-item nav-details pre-listed" data-track="details" ng-class="(step == 'details') ? 'nav-active' : ''">
-  <a href="{{ ($room_step != 'details') ? url('manage-listing/'.$room_id.'/details') : '' }}" id="href_details">
+  <a href="{{ ($room_step != 'details') ? url('admin/listing/'.$room_id.'/details') : '' }}" id="href_details">
     <div class="row nav-item">
       <div class="col-sm-12 va-container">
         <span class="va-middle">{{ trans('messages.lys.detailed_description') }}</span>
@@ -272,7 +272,7 @@
 </li>
 
         <li class="nav-item nav-guidebook post-listed" data-track="guidebook" ng-class="(step == 'guidebook') ? 'nav-active' : ''">
-  <a href="{{ ($room_step != 'guidebook') ? url('manage-listing/'.$room_id.'/guidebook') : '' }}" id="href_guidebook">
+  <a href="{{ ($room_step != 'guidebook') ? url('admin/listing/'.$room_id.'/guidebook') : '' }}" id="href_guidebook">
     <div class="row nav-item">
       <div class="col-sm-12 va-container">
         <span class="va-middle">{{ trans('messages.lys.guidebook') }}</span>
@@ -297,7 +297,7 @@
 
       
         <li class="nav-item nav-terms pre-listed" data-track="terms" ng-class="(step == 'terms') ? 'nav-active' : ''">
-  <a href="{{ ($room_step != 'terms') ? url('manage-listing/'.$room_id.'/terms') : '' }}" id="href_terms">
+  <a href="{{ ($room_step != 'terms') ? url('admin/listing/'.$room_id.'/terms') : '' }}" id="href_terms">
     <div class="row nav-item">
       <div class="col-sm-12 va-container">
         <span class="va-middle">{{ trans('messages.lys.terms') }}</span>
@@ -331,7 +331,7 @@
     <ul class="list-unstyled row-space-5">
       
         <li class="nav-item nav-pricing pre-listed" data-track="pricing" ng-class="(step == 'pricing') ? 'nav-active' : ''">
-  <a href="{{ ($room_step != 'pricing') ? url('manage-listing/'.$room_id.'/pricing') : '' }}" id="href_pricing">
+  <a href="{{ ($room_step != 'pricing') ? url('admin/listing/'.$room_id.'/pricing') : '' }}" id="href_pricing">
     <div class="row nav-item">
       <div class="col-sm-12 va-container">
         <span class="va-middle">{{ trans('messages.lys.pricing') }}</span>
@@ -359,7 +359,7 @@
 </li>
 
         <li class="nav-item nav-calendar pre-listed" data-track="calendar" ng-class="(step == 'calendar') ? 'nav-active' : ''">
-  <a href="{{ ($room_step != 'calendar') ? url('manage-listing/'.$room_id.'/calendar') : '' }}" id="href_calendar">
+  <a href="{{ ($room_step != 'calender') ? url('admin/listing/'.$room_id.'/calender') : '' }}" id="href_calendar">
     <div class="row nav-item">
       <div class="col-sm-12 va-container">
         <span class="va-middle">{{ trans('messages.lys.calendar') }}</span>

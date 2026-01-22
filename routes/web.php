@@ -146,7 +146,9 @@ Route::group(['prefix' => 'admin', 'namespace' => 'Admin', 'middleware' => ['gue
 		Route::match(array('GET', 'POST'),'listing/{id}/update_status', 'PropertiesController@update_status');
 		Route::match(array('POST'),'listing/photo/make_default_photo', 'PropertiesController@makeDefaultPhoto');
 		Route::match(array('POST'),'listing/photo/make_photo_serial', 'PropertiesController@makePhotoSerial');
-		Route::match(array('GET', 'POST'),'listing/{id}/{step}', 'PropertiesController@listing')->where(['id' => '[0-9]+','page' => 'basics|description|location|amenities|photos|pricing|calendar|details|booking']);
+		Route::match(array('GET', 'POST'),'listing/{id}/{step}', 'PropertiesController@listing')->where(['id' => '[0-9]+','step' => 'basics|description|location|amenities|photos|pricing|calender|details|booking']);
+		// Route alias for backward compatibility - manage-listing with calendar/calender mapping
+		Route::match(array('GET', 'POST'),'manage-listing/{id}/{step}', 'PropertiesController@listing')->where(['id' => '[0-9]+','step' => 'basics|description|location|amenities|photos|pricing|calendar|calender|details|booking']);
 	});
 
     Route::post('ajax-calender/{id}', 'CalendarController@calenderJson');

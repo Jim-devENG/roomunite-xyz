@@ -23,6 +23,7 @@ namespace App\Http\Controllers\Admin;
 use PDF;
 use Validator;
 use DB;
+use Illuminate\Support\Facades\Schema;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -248,8 +249,14 @@ class PayoutsController extends Controller
         })
         ->join('currency', function ($join) {
                 $join->on('currency.code', '=', 'payouts.currency_code');
-        })
-        ->select(['properties.name as property_name', 'users.first_name AS user', DB::raw('CONCAT(currency.symbol, payouts.amount) AS payouts_amount'), DB::raw('CONCAT(currency.symbol, payouts.penalty_amount) AS penalty'), 'payouts.account as payouts_account', 'payouts.created_at as payouts_date', 'payouts.*']);
+        });
+        
+        // Check if first_name column exists, otherwise use email or a default
+        if (Schema::hasColumn('users', 'first_name')) {
+            $allPayouts->select(['properties.name as property_name', 'users.first_name AS user', DB::raw('CONCAT(currency.symbol, payouts.amount) AS payouts_amount'), DB::raw('CONCAT(currency.symbol, payouts.penalty_amount) AS penalty'), 'payouts.account as payouts_account', 'payouts.created_at as payouts_date', 'payouts.*']);
+        } else {
+            $allPayouts->select(['properties.name as property_name', DB::raw('COALESCE(users.email, "N/A") AS user'), DB::raw('CONCAT(currency.symbol, payouts.amount) AS payouts_amount'), DB::raw('CONCAT(currency.symbol, payouts.penalty_amount) AS penalty'), 'payouts.account as payouts_account', 'payouts.created_at as payouts_date', 'payouts.*']);
+        }
         // ->orderBy('payouts.id', 'desc');
 
         return $allPayouts;
@@ -291,9 +298,16 @@ class PayoutsController extends Controller
         })
         ->join('currency', function ($join) {
                 $join->on('currency.code', '=', 'payouts.currency_code');
-        })
-        ->select(['properties.name as property_name', 'users.first_name AS user', DB::raw('payouts.amount AS payouts_amount'), DB::raw('payouts.penalty_amount AS penalty'), 'payouts.account as payouts_account', 'payouts.created_at as payouts_date', 'payouts.*'])
-        ->orderBy('payouts.id', 'desc');
+        });
+        
+        // Check if first_name column exists, otherwise use email or a default
+        if (Schema::hasColumn('users', 'first_name')) {
+            $allPayouts->select(['properties.name as property_name', 'users.first_name AS user', DB::raw('payouts.amount AS payouts_amount'), DB::raw('payouts.penalty_amount AS penalty'), 'payouts.account as payouts_account', 'payouts.created_at as payouts_date', 'payouts.*']);
+        } else {
+            $allPayouts->select(['properties.name as property_name', DB::raw('COALESCE(users.email, "N/A") AS user'), DB::raw('payouts.amount AS payouts_amount'), DB::raw('payouts.penalty_amount AS penalty'), 'payouts.account as payouts_account', 'payouts.created_at as payouts_date', 'payouts.*']);
+        }
+        
+        $allPayouts->orderBy('payouts.id', 'desc');
 
         return $allPayouts;
     }

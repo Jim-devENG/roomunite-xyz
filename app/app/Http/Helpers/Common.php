@@ -121,19 +121,25 @@ class Common {
     function backup_tables($host,$user,$pass,$name,$tables = '*')
     {
         try {
-            $con = mysqli_connect($host,$user,$pass,$name);
-        } catch (Exception $e) {
-
+            $con = @mysqli_connect($host,$user,$pass,$name);
+        } catch (\Exception $e) {
+            Log::error('Backup failed: ' . $e->getMessage());
+            return 0;
         }
 
-        if (mysqli_connect_errno()) {
-            $this->one_time_message('danger', "Failed to connect to MySQL: ".mysqli_connect_error());
+        if (!$con || mysqli_connect_errno()) {
+            Log::error('Backup failed: Failed to connect to MySQL: ' . mysqli_connect_error());
             return 0;
         }
 
         if ($tables == '*') {
              $tables = array();
              $result = mysqli_query($con, 'SHOW TABLES');
+             if (!$result) {
+                 mysqli_close($con);
+                 Log::error('Backup failed: Could not get table list');
+                 return 0;
+             }
             while ($row = mysqli_fetch_row($result)) {
                 $tables[] = $row[0];
             }
@@ -144,11 +150,19 @@ class Common {
         $return = '';
         foreach($tables as $table) {
             $result = mysqli_query($con, 'SELECT * FROM '.$table);
+            if (!$result) {
+                continue; // Skip tables that can't be read
+            }
             $num_fields = mysqli_num_fields($result);
 
-
-            $row2 = mysqli_fetch_row(mysqli_query($con, 'SHOW CREATE TABLE '.$table));
-            $return.= "\n\n".str_replace("CREATE TABLE", "CREATE TABLE IF NOT EXISTS", $row2[1]).";\n\n";
+            $create_result = mysqli_query($con, 'SHOW CREATE TABLE '.$table);
+            if (!$create_result) {
+                continue; // Skip tables that can't get create statement
+            }
+            $row2 = mysqli_fetch_row($create_result);
+            if ($row2 && isset($row2[1])) {
+                $return.= "\n\n".str_replace("CREATE TABLE", "CREATE TABLE IF NOT EXISTS", $row2[1]).";\n\n";
+            }
 
             for ($i = 0; $i < $num_fields; $i++) {
                 while ($row = mysqli_fetch_row($result)) {
@@ -166,10 +180,27 @@ class Common {
             $return.="\n\n\n";
         }
 
-        $backup_name = date('Y-m-d-His').'.sql';
+        mysqli_close($con);
 
-        $handle = fopen(storage_path("db-backups").'/'.$backup_name,'w+');
-        fwrite($handle,$return);
+        $backup_name = date('Y-m-d-His').'.sql';
+        $backup_dir = storage_path("db-backups");
+        
+        // Create directory if it doesn't exist
+        if (!file_exists($backup_dir)) {
+            if (!mkdir($backup_dir, 0755, true)) {
+                Log::error('Backup failed: Could not create backup directory');
+                return 0;
+            }
+        }
+
+        $backup_path = $backup_dir . '/' . $backup_name;
+        $handle = @fopen($backup_path, 'w+');
+        if (!$handle) {
+            Log::error('Backup failed: Could not open file for writing: ' . $backup_path);
+            return 0;
+        }
+        
+        fwrite($handle, $return);
         fclose($handle);
 
         return $backup_name;

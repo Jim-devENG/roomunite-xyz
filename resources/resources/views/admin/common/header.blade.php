@@ -11,6 +11,11 @@
 
 		<div class="navbar-custom-menu">
 			<ul class="nav navbar-nav">
+				<li>
+					<a href="{{ url('/') }}" class="btn btn-primary btn-sm" style="margin-top: 8px; margin-right: 10px;">
+						<i class="fa fa-list"></i> <span class="hidden-xs">Listings</span>
+					</a>
+				</li>
 				<li class="dropdown user user-menu">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown">
 						<img src="{{\Auth::guard('admin')->user()->profile_src}}" class="user-image" alt="User Image">

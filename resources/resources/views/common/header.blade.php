@@ -20,12 +20,26 @@
 
                         @if(!Auth::check())
                             <div class="nav-item">
+                                <a class="nav-link" href="{{ url('/') }}" aria-label="listings">
+                                    <button class="btn btn-sm btn-outline-primary text-14 font-weight-600 pl-3 pr-3">
+                                        <i class="far fa-list-alt mr-1"></i> Listings
+                                    </button>
+                                </a>
+                            </div>
+                            <div class="nav-item">
                                 <a class="nav-link" href="{{ url('signup') }}" aria-label="signup">{{trans('messages.sign_up.sign_up')}}</a>
                             </div>
                             <div class="nav-item">
                                 <a class="nav-link" href="{{ url('login') }}" aria-label="login">{{trans('messages.header.login')}}</a>
                             </div>
                         @else
+                            <div class="nav-item">
+                                <a class="nav-link" href="{{ url('/') }}" aria-label="listings">
+                                    <button class="btn btn-sm btn-outline-primary text-14 font-weight-600 pl-3 pr-3">
+                                        <i class="far fa-list-alt mr-1"></i> Listings
+                                    </button>
+                                </a>
+                            </div>
                             @if(Request::segment(1) != 'help')
                                     <div class="nav-item">
                                         <a class="nav-link p-2" href="{{ url('property/create') }}" aria-label="property-create">

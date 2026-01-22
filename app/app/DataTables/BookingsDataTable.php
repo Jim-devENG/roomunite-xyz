@@ -7,6 +7,7 @@ use App\Models\Currency;
 use Yajra\DataTables\Services\DataTable;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Session;
 
 class BookingsDataTable extends DataTable
@@ -68,10 +69,16 @@ class BookingsDataTable extends DataTable
             ->join('currency', function ($join) {
                 $join->on('currency.code', '=', 'bookings.currency_code');
             })
-            ->Join('users as u', function ($join) {
+            ->leftJoin('users as u', function ($join) {
                 $join->on('u.id', '=', 'bookings.host_id');
-            })
-            ->select(['bookings.id as id', 'u.first_name as host_name', 'users.first_name as guest_name', 'bookings.property_id as property_id', 'properties.name as property_name','bookings.total AS total_amount','bookings.payment_method_id', 'bookings.status', 'bookings.created_at as created_at', 'bookings.updated_at as updated_at', 'bookings.start_date', 'bookings.end_date', 'bookings.guest', 'bookings.host_id', 'bookings.user_id', 'bookings.total', 'bookings.currency_code', 'bookings.service_charge', 'bookings.host_fee', 'bookings.iva_tax', 'bookings.accomodation_tax']);
+            });
+        
+        // Check if first_name column exists, otherwise use email or a default
+        if (Schema::hasColumn('users', 'first_name')) {
+            $bookings->select(['bookings.id as id', 'u.first_name as host_name', 'users.first_name as guest_name', 'bookings.property_id as property_id', 'properties.name as property_name','bookings.total AS total_amount','bookings.payment_method_id', 'bookings.status', 'bookings.created_at as created_at', 'bookings.updated_at as updated_at', 'bookings.start_date', 'bookings.end_date', 'bookings.guest', 'bookings.host_id', 'bookings.user_id', 'bookings.total', 'bookings.currency_code', 'bookings.service_charge', 'bookings.host_fee', 'bookings.iva_tax', 'bookings.accomodation_tax']);
+        } else {
+            $bookings->select(['bookings.id as id', DB::raw('COALESCE(u.email, "N/A") as host_name'), DB::raw('COALESCE(users.email, "N/A") as guest_name'), 'bookings.property_id as property_id', 'properties.name as property_name','bookings.total AS total_amount','bookings.payment_method_id', 'bookings.status', 'bookings.created_at as created_at', 'bookings.updated_at as updated_at', 'bookings.start_date', 'bookings.end_date', 'bookings.guest', 'bookings.host_id', 'bookings.user_id', 'bookings.total', 'bookings.currency_code', 'bookings.service_charge', 'bookings.host_fee', 'bookings.iva_tax', 'bookings.accomodation_tax']);
+        }
         if (isset($user_id)) {
             $bookings->where('bookings.user_id', '=', $user_id);
         }

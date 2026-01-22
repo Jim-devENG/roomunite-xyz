@@ -3,6 +3,7 @@ namespace App\DataTables;
 use App\Models\User;
 use App\Models\Withdrawal;
 use Yajra\DataTables\Services\DataTable;
+use Illuminate\Support\Facades\Schema;
 use Auth;
 use Request;
 
@@ -22,7 +23,15 @@ class PayoutsDataTable extends DataTable
         })
 
         ->addColumn('user_id', function ($withDrawal) {
-            $userName = ucfirst(isset($withDrawal->user->first_name) ? $withDrawal->user->first_name : ' ').' '.ucfirst(isset($withDrawal->user->last_name) ? $withDrawal->user->last_name : '');
+            if ($withDrawal->user) {
+                if (Schema::hasColumn('users', 'first_name')) {
+                    $userName = ucfirst(isset($withDrawal->user->first_name) ? $withDrawal->user->first_name : ' ').' '.ucfirst(isset($withDrawal->user->last_name) ? $withDrawal->user->last_name : '');
+                } else {
+                    $userName = $withDrawal->user->email ?? 'N/A';
+                }
+            } else {
+                $userName = 'N/A';
+            }
             return $userName;
         })
 

@@ -25,6 +25,7 @@ use App\DataTables\BackupsDataTable;
 use App\Models\Backup;
 use Validator;
 use DB;
+use Illuminate\Support\Facades\Log;
 use App\Http\Helpers\Common;
 
 class BackupController extends Controller
@@ -44,10 +45,17 @@ class BackupController extends Controller
     public function add(Request $request)
     {
         if (env('APP_MODE', '') != 'test') {
-            $backup_name = $this->helper->backup_tables(env('DB_HOST'), env('DB_USERNAME'), env('DB_PASSWORD'), env('DB_DATABASE'));
-            if ($backup_name != 0) {
-                DB::table('backups')->insert(['name' => $backup_name, 'created_at' => date('Y-m-d H:i:s')]);
-                $this->helper->one_time_message('success', 'Successfully saved');
+            try {
+                $backup_name = $this->helper->backup_tables(env('DB_HOST'), env('DB_USERNAME'), env('DB_PASSWORD'), env('DB_DATABASE'));
+                if ($backup_name != 0 && $backup_name !== false) {
+                    DB::table('backups')->insert(['name' => $backup_name, 'created_at' => date('Y-m-d H:i:s')]);
+                    $this->helper->one_time_message('success', 'Successfully saved');
+                } else {
+                    $this->helper->one_time_message('danger', 'Backup failed. Please check the logs for details.');
+                }
+            } catch (\Exception $e) {
+                Log::error('Backup error: ' . $e->getMessage());
+                $this->helper->one_time_message('danger', 'Backup failed: ' . $e->getMessage());
             }
         }
         return redirect()->intended('admin/settings/backup');

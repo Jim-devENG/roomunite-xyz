@@ -283,8 +283,29 @@ class LoginController extends Controller
 
     public function googleAuthenticate(EmailController $email_controller, UserController $user_controller)
     {
+        // Handle OAuth errors from Google
+        if (isset(request()->error)) {
+            $error = request()->error;
+            $errorDescription = request()->error_description ?? 'An error occurred during Google authentication.';
+            
+            // Log the error for debugging
+            \Log::error('Google OAuth Error', [
+                'error' => $error,
+                'error_description' => $errorDescription,
+                'redirect_uri' => config('services.google.redirect')
+            ]);
+            
+            // Show user-friendly error message
+            if ($error === 'invalid_request') {
+                $this->helper->one_time_message('danger', 'Google authentication failed. Please ensure the redirect URI is properly configured in Google Cloud Console. Required URI: ' . url('/googleAuthenticate'));
+            } else {
+                $this->helper->one_time_message('danger', 'Google authentication failed: ' . $errorDescription);
+            }
+            
+            return redirect('login');
+        }
 
-        if (!isset(request()->error)) {
+        try {
             $userNode = Socialite::with('google')->user();
 
             $verificationUser = Session::get('verification');
@@ -355,7 +376,13 @@ class LoginController extends Controller
                 $data['title'] = 'Disabled ';
                 return view('users.disabled', $data);
             }
-        } else {
+        } catch (\Exception $e) {
+            \Log::error('Google OAuth Exception', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            $this->helper->one_time_message('danger', 'An error occurred during Google authentication. Please try again or use email login.');
             return redirect('login');
         }
     }
